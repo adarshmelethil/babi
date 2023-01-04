@@ -64,26 +64,26 @@ class Screen:
         return ret
 
     def addstr(self, y, x, s, attr):
-        self.lines[y] = self.lines[y][:x] + s + self.lines[y][x + len(s):]
+        self.lines[y] = self.lines[y][:x] + s + self.lines[y][x + len(s) :]
 
         line_attr = self.attrs[y]
         new = [attr] * len(s)
-        self.attrs[y] = line_attr[:x] + new + line_attr[x + len(s):]
+        self.attrs[y] = line_attr[:x] + new + line_attr[x + len(s) :]
 
         self.y = y
         self.x = x + len(s)
 
     def insstr(self, y, x, s, attr):
         line = self.lines[y]
-        self.lines[y] = (line[:x] + s + line[x:])[:self.width]
+        self.lines[y] = (line[:x] + s + line[x:])[: self.width]
 
         line_attr = self.attrs[y]
         new = [attr] * len(s)
-        self.attrs[y] = (line_attr[:x] + new + line_attr[x:])[:self.width]
+        self.attrs[y] = (line_attr[:x] + new + line_attr[x:])[: self.width]
 
     def chgat(self, y, x, n, attr):
         assert n >= 0  # TODO: switch to > 0, we should never do 0-length
-        self.attrs[y][x:x + n] = [attr] * n
+        self.attrs[y][x : x + n] = [attr] * n
 
     def move(self, y, x):
         assert 0 <= y < self.height
@@ -104,7 +104,8 @@ class Screen:
 
 
 class Op(Protocol):
-    def __call__(self, screen: Screen) -> None: ...
+    def __call__(self, screen: Screen) -> None:
+        ...
 
 
 class AwaitText(NamedTuple):
@@ -192,12 +193,12 @@ class CursesScreen:
         if attr == 0:
             return self._bkgd_attr
         else:
-            pair = (attr & (0xff << 8)) >> 8
+            pair = (attr & (0xFF << 8)) >> 8
             if pair == 0:
                 fg, bg, _ = self._bkgd_attr
             else:
                 fg, bg = self._runner.color_pairs[pair]
-            attr = attr & ~(0xff << 8)
+            attr = attr & ~(0xFF << 8)
             return (fg, bg, attr)
 
     def bkgd(self, c, attr):
@@ -438,6 +439,7 @@ class DeferredRunner:
     def _curses_not_implemented(self, fn):
         def fn_inner(*args, **kwargs):
             raise NotImplementedError(fn)
+
         return fn_inner
 
     def _patch_curses(self):

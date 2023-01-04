@@ -24,24 +24,26 @@ if TYPE_CHECKING:
 
 @functools.lru_cache(maxsize=1)
 def _compiler() -> Compiler:
-    grammar = Grammar.make({
-        'scopeName': 'source.demo',
-        'fileTypes': ['demo'],
-        'patterns': [
-            {
-                'match': r'^([0-9]+)(:)([0-9]+)(:) (\[[^\]]+\]) ([^ ]+)',
-                'name': 'line.error',
-                'captures': {
-                    '1': {'name': 'constant.numeric'},
-                    '2': {'name': 'punctuation.separator'},
-                    '3': {'name': 'constant.numeric'},
-                    '4': {'name': 'punctuation.separator'},
-                    '5': {'name': 'strong support.type'},
-                    '6': {'name': 'invalid'},
+    grammar = Grammar.make(
+        {
+            'scopeName': 'source.demo',
+            'fileTypes': ['demo'],
+            'patterns': [
+                {
+                    'match': r'^([0-9]+)(:)([0-9]+)(:) (\[[^\]]+\]) ([^ ]+)',
+                    'name': 'line.error',
+                    'captures': {
+                        '1': {'name': 'constant.numeric'},
+                        '2': {'name': 'punctuation.separator'},
+                        '3': {'name': 'constant.numeric'},
+                        '4': {'name': 'punctuation.separator'},
+                        '5': {'name': 'strong support.type'},
+                        '6': {'name': 'invalid'},
+                    },
                 },
-            },
-        ],
-    })
+            ],
+        }
+    )
     return Compiler(grammar, Grammars())
 
 
@@ -72,10 +74,10 @@ class LintErrors:
     def _del_cb(self, lines: Buf, idx: int, victim: str) -> None:
         errors = tuple(
             error._replace(lineno=error.lineno - 1, disabled=True)
-            if error.line_idx == idx else
-            error._replace(lineno=error.lineno - 1)
-            if error.line_idx > idx else
-            error
+            if error.line_idx == idx
+            else error._replace(lineno=error.lineno - 1)
+            if error.line_idx > idx
+            else error
             for error in self.errors
         )
         self.set_errors(errors)
@@ -83,7 +85,8 @@ class LintErrors:
     def _ins_cb(self, lines: Buf, idx: int) -> None:
         errors = tuple(
             error._replace(lineno=error.lineno + 1)
-            if error.line_idx >= idx - 1 else error
+            if error.line_idx >= idx - 1
+            else error
             for error in self.errors
         )
         self.set_errors(errors)
@@ -99,11 +102,13 @@ class LintErrors:
 
         self.errors = errors
         self.regions.clear()
-        self.regions.update({
-            error.line_idx: (HL(x=0, end=1, attr=attr),)
-            for error in errors
-            if not error.disabled
-        })
+        self.regions.update(
+            {
+                error.line_idx: (HL(x=0, end=1, attr=attr),)
+                for error in errors
+                if not error.disabled
+            }
+        )
 
         if not self.errors:
             self.y = self.top = 0
@@ -117,11 +122,11 @@ class LintErrors:
         return ret
 
     def draw(
-            self,
-            stdscr: curses._CursesWindow,
-            dim: Dim,
-            *,
-            focused: bool = False,
+        self,
+        stdscr: curses._CursesWindow,
+        dim: Dim,
+        *,
+        focused: bool = False,
     ) -> None:
         to_display = min(len(self.errors) - self.top, dim.height)
         for i in range(to_display):
@@ -140,7 +145,10 @@ class LintErrors:
             else:
                 compiler = _compiler()
                 _, regions = highlight_line(
-                    compiler, compiler.root_state, s, first_line=True,
+                    compiler,
+                    compiler.root_state,
+                    s,
+                    first_line=True,
                 )
 
                 # handle the scroll indicator

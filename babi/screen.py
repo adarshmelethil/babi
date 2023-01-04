@@ -142,10 +142,10 @@ class Layout(NamedTuple):
 
 class Screen:
     def __init__(
-            self,
-            stdscr: curses._CursesWindow,
-            file_infos: list[FileInfo],
-            perf: Perf,
+        self,
+        stdscr: curses._CursesWindow,
+        file_infos: list[FileInfo],
+        perf: Perf,
     ) -> None:
         self.stdscr = stdscr
         self.syntax = Syntax.from_screen(stdscr, ColorManager.make())
@@ -337,9 +337,9 @@ class Screen:
         self.draw()
 
     def quick_prompt(
-            self,
-            prompt: str,
-            opt_strs: tuple[str, ...],
+        self,
+        prompt: str,
+        opt_strs: tuple[str, ...],
     ) -> str | PromptResult:
         opts = {opt[0] for opt in opt_strs}
         while True:
@@ -382,13 +382,13 @@ class Screen:
                 return key.wch.lower()
 
     def prompt(
-            self,
-            prompt: str,
-            *,
-            allow_empty: bool = False,
-            history: str | None = None,
-            default_prev: bool = False,
-            default: str | None = None,
+        self,
+        prompt: str,
+        *,
+        allow_empty: bool = False,
+        history: str | None = None,
+        default_prev: bool = False,
+        default: str | None = None,
     ) -> str | PromptResult:
         default = default or ''
         self.status.clear()
@@ -457,10 +457,10 @@ class Screen:
             return PromptResult.CANCELLED
 
     def _undo_redo(
-            self,
-            op: str,
-            from_stack: list[Action],
-            to_stack: list[Action],
+        self,
+        op: str,
+        from_stack: list[Action],
+        to_stack: list[Action],
     ) -> None:
         if not from_stack:
             self.status.update(f'nothing to {op}!')
@@ -486,7 +486,9 @@ class Screen:
         search_response = self._get_search_re('search (to replace)')
         if search_response is not PromptResult.CANCELLED:
             response = self.prompt(
-                'replace with', history='replace', allow_empty=True,
+                'replace with',
+                history='replace',
+                allow_empty=True,
             )
             if response is not PromptResult.CANCELLED:
                 try:
@@ -507,7 +509,8 @@ class Screen:
 
         if self.file.modified:
             response = self.quick_prompt(
-                'file must be saved before linting - save', ('yes', 'no'),
+                'file must be saved before linting - save',
+                ('yes', 'no'),
             )
             if response != 'y':
                 self.status.cancelled()
@@ -606,7 +609,7 @@ class Screen:
         self.status.update('sorted!')
 
     def _command_tabsize(self, args: list[str]) -> None:
-        tab_size, = args
+        (tab_size,) = args
         try:
             parsed_tab_size = int(tab_size)
         except ValueError:
@@ -631,7 +634,7 @@ class Screen:
 
     def _command_comment(self, args: list[str]) -> None:
         if len(args) == 1:
-            comment, = args
+            (comment,) = args
         else:
             comment = '#'
         if self.file.selection.start:
@@ -646,7 +649,8 @@ class Screen:
 
         if self.file.modified:
             response = self.quick_prompt(
-                'reload will discard changes - continue', ('yes', 'no'),
+                'reload will discard changes - continue',
+                ('yes', 'no'),
             )
             if response != 'y':
                 return
@@ -690,8 +694,7 @@ class Screen:
         if isinstance(command.nargs, int):
             if len(args) != command.nargs:
                 self.status.update(
-                    f'`{cmd}`: expected {command.nargs} args '
-                    f'but got {len(args)}',
+                    f'`{cmd}`: expected {command.nargs} args ' f'but got {len(args)}',
                 )
                 return None
         elif command.nargs == '?':
@@ -736,7 +739,10 @@ class Screen:
             dir_path = os.path.dirname(os.path.abspath(self.file.filename))
             os.makedirs(dir_path, exist_ok=True)
             with open(
-                self.file.filename, 'w', encoding='UTF-8', newline='',
+                self.file.filename,
+                'w',
+                encoding='UTF-8',
+                newline='',
             ) as f:
                 f.write(contents)
         except OSError as e:
@@ -776,7 +782,8 @@ class Screen:
     def quit_save_modified(self) -> EditResult | None:
         if self.file.modified:
             response = self.quick_prompt(
-                'file is modified - save', ('yes', 'no'),
+                'file is modified - save',
+                ('yes', 'no'),
             )
             if response == 'y':
                 if self.save_filename() is not PromptResult.CANCELLED:
@@ -833,6 +840,7 @@ class Screen:
         if sys.platform == 'win32':  # pragma: win32 cover
             yield  # no signal handling on windows!
         else:
+
             def sigusr1_handler(signum: int, frame: FrameType | None) -> None:
                 self._retheme = True
                 os.kill(os.getpid(), signal.SIGWINCH)
@@ -846,9 +854,8 @@ class Screen:
 
 def _init_screen() -> curses._CursesWindow:
     # set the escape delay so curses does not pause waiting for sequences
-    if (
-            sys.version_info >= (3, 9) and
-            hasattr(curses, 'set_escdelay')
+    if sys.version_info >= (3, 9) and hasattr(
+        curses, 'set_escdelay'
     ):  # pragma: >=3.9 cover
         curses.set_escdelay(25)
     else:  # pragma: <3.9 cover

@@ -16,4 +16,5 @@ def make_grammars(tmpdir):
             filename = f'{grammar["scopeName"]}.json'
             grammar_dir.join(filename).write(json.dumps(grammar))
         return Grammars(grammar_dir)
+
     return make_grammars

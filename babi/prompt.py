@@ -85,15 +85,15 @@ class Prompt:
 
     def _backspace(self) -> None:
         if self._x > 0:
-            self._s = self._s[:self._x - 1] + self._s[self._x:]
+            self._s = self._s[: self._x - 1] + self._s[self._x :]
             self._x -= 1
 
     def _delete(self) -> None:
         if self._x < len(self._s):
-            self._s = self._s[:self._x] + self._s[self._x + 1:]
+            self._s = self._s[: self._x] + self._s[self._x + 1 :]
 
     def _cut_to_end(self) -> None:
-        self._s = self._s[:self._x]
+        self._s = self._s[: self._x]
 
     def _resize(self) -> None:
         self._screen.resize()
@@ -172,7 +172,7 @@ class Prompt:
     }
 
     def _c(self, c: str) -> None:
-        self._s = self._s[:self._x] + c + self._s[self._x:]
+        self._s = self._s[: self._x] + c + self._s[self._x :]
         self._x += len(c)
 
     def run(self) -> PromptResult | str:

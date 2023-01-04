@@ -58,9 +58,9 @@ class Rule(NamedTuple):
 
     @classmethod
     def make(
-            cls,
-            dct: dict[str, Any],
-            parent_repository: FChainMap[str, Rule],
+        cls,
+        dct: dict[str, Any],
+        parent_repository: FChainMap[str, Rule],
     ) -> Rule:
         if 'repository' in dct:
             # this looks odd, but it's so we can have a self-referential
@@ -81,8 +81,7 @@ class Rule(NamedTuple):
 
         if 'captures' in dct:
             captures = tuple(
-                (int(k), Rule.make(v, repository))
-                for k, v in dct['captures'].items()
+                (int(k), Rule.make(v, repository)) for k, v in dct['captures'].items()
             )
         else:
             captures = ()
@@ -210,33 +209,37 @@ class State(NamedTuple):
 
 class CompiledRule(Protocol):
     @property
-    def name(self) -> tuple[str, ...]: ...
+    def name(self) -> tuple[str, ...]:
+        ...
 
     def start(
-            self,
-            compiler: Compiler,
-            match: Match[str],
-            state: State,
+        self,
+        compiler: Compiler,
+        match: Match[str],
+        state: State,
     ) -> tuple[State, bool, Regions]:
         ...
 
     def search(
-            self,
-            compiler: Compiler,
-            state: State,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        compiler: Compiler,
+        state: State,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> tuple[State, int, bool, Regions] | None:
         ...
 
 
 class CompiledRegsetRule(CompiledRule, Protocol):
     @property
-    def regset(self) -> _RegSet: ...
+    def regset(self) -> _RegSet:
+        ...
+
     @property
-    def u_rules(self) -> tuple[Rule, ...]: ...
+    def u_rules(self) -> tuple[Rule, ...]:
+        ...
 
 
 class Entry(NamedTuple):
@@ -248,24 +251,22 @@ class Entry(NamedTuple):
 
 
 def _inner_capture_parse(
-        compiler: Compiler,
-        start: int,
-        s: str,
-        scope: Scope,
-        rule: CompiledRule,
+    compiler: Compiler,
+    start: int,
+    s: str,
+    scope: Scope,
+    rule: CompiledRule,
 ) -> Regions:
     state = State.root(Entry(scope + rule.name, rule, (s, 0)))
     _, regions = highlight_line(compiler, state, s, first_line=False)
-    return tuple(
-        r._replace(start=r.start + start, end=r.end + start) for r in regions
-    )
+    return tuple(r._replace(start=r.start + start, end=r.end + start) for r in regions)
 
 
 def _captures(
-        compiler: Compiler,
-        scope: Scope,
-        match: Match[str],
-        captures: Captures,
+    compiler: Compiler,
+    scope: Scope,
+    match: Match[str],
+    captures: Captures,
 ) -> Regions:
     ret: list[Region] = []
     pos, pos_end = match.span()
@@ -292,13 +293,17 @@ def _captures(
 
             newtok.extend(
                 _inner_capture_parse(
-                    compiler, start, match[i], oldtok.scope, rule,
+                    compiler,
+                    start,
+                    match[i],
+                    oldtok.scope,
+                    rule,
                 ),
             )
 
             if end < oldtok.end:
                 newtok.append(oldtok._replace(start=end))
-            ret[j:j + 1] = newtok
+            ret[j : j + 1] = newtok
         else:
             if start > pos:
                 ret.append(Region(pos, start, scope))
@@ -315,12 +320,12 @@ def _captures(
 
 
 def _do_regset(
-        idx: int,
-        match: Match[str] | None,
-        rule: CompiledRegsetRule,
-        compiler: Compiler,
-        state: State,
-        pos: int,
+    idx: int,
+    match: Match[str] | None,
+    rule: CompiledRegsetRule,
+    compiler: Compiler,
+    state: State,
+    pos: int,
 ) -> tuple[State, int, bool, Regions] | None:
     if match is None:
         return None
@@ -343,21 +348,21 @@ class PatternRule(NamedTuple):
     u_rules: tuple[Rule, ...]
 
     def start(
-            self,
-            compiler: Compiler,
-            match: Match[str],
-            state: State,
+        self,
+        compiler: Compiler,
+        match: Match[str],
+        state: State,
     ) -> tuple[State, bool, Regions]:
         raise AssertionError(f'unreachable {self}')
 
     def search(
-            self,
-            compiler: Compiler,
-            state: State,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        compiler: Compiler,
+        state: State,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> tuple[State, int, bool, Regions] | None:
         idx, match = self.regset.search(line, pos, first_line, boundary)
         return _do_regset(idx, match, self, compiler, state, pos)
@@ -369,22 +374,22 @@ class MatchRule(NamedTuple):
     captures: Captures
 
     def start(
-            self,
-            compiler: Compiler,
-            match: Match[str],
-            state: State,
+        self,
+        compiler: Compiler,
+        match: Match[str],
+        state: State,
     ) -> tuple[State, bool, Regions]:
         scope = state.cur.scope + self.name
         return state, False, _captures(compiler, scope, match, self.captures)
 
     def search(
-            self,
-            compiler: Compiler,
-            state: State,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        compiler: Compiler,
+        state: State,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> tuple[State, int, bool, Regions] | None:
         raise AssertionError(f'unreachable {self}')
 
@@ -400,10 +405,10 @@ class EndRule(NamedTuple):
     u_rules: tuple[Rule, ...]
 
     def start(
-            self,
-            compiler: Compiler,
-            match: Match[str],
-            state: State,
+        self,
+        compiler: Compiler,
+        match: Match[str],
+        state: State,
     ) -> tuple[State, bool, Regions]:
         scope = state.cur.scope + self.name
         next_scope = scope + self.content_name
@@ -416,11 +421,11 @@ class EndRule(NamedTuple):
         return state, True, regions
 
     def _end_ret(
-            self,
-            compiler: Compiler,
-            state: State,
-            pos: int,
-            m: Match[str],
+        self,
+        compiler: Compiler,
+        state: State,
+        pos: int,
+        m: Match[str],
     ) -> tuple[State, int, bool, Regions]:
         ret = []
         if m.start() > pos:
@@ -438,13 +443,13 @@ class EndRule(NamedTuple):
         return state.pop(), end, False, tuple(ret)
 
     def search(
-            self,
-            compiler: Compiler,
-            state: State,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        compiler: Compiler,
+        state: State,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> tuple[State, int, bool, Regions] | None:
         end_match = state.cur.reg.search(line, pos, first_line, boundary)
         if end_match is not None and end_match.start() == pos:
@@ -471,10 +476,10 @@ class WhileRule(NamedTuple):
     u_rules: tuple[Rule, ...]
 
     def start(
-            self,
-            compiler: Compiler,
-            match: Match[str],
-            state: State,
+        self,
+        compiler: Compiler,
+        match: Match[str],
+        state: State,
     ) -> tuple[State, bool, Regions]:
         scope = state.cur.scope + self.name
         next_scope = scope + self.content_name
@@ -488,13 +493,13 @@ class WhileRule(NamedTuple):
         return state, True, regions
 
     def continues(
-            self,
-            compiler: Compiler,
-            state: State,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        compiler: Compiler,
+        state: State,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> tuple[int, bool, Regions] | None:
         match = state.cur.reg.match(line, pos, first_line, boundary)
         if match is None:
@@ -504,13 +509,13 @@ class WhileRule(NamedTuple):
         return match.end(), True, ret
 
     def search(
-            self,
-            compiler: Compiler,
-            state: State,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        compiler: Compiler,
+        state: State,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> tuple[State, int, bool, Regions] | None:
         idx, match = self.regset.search(line, pos, first_line, boundary)
         return _do_regset(idx, match, self, compiler, state, pos)
@@ -533,10 +538,10 @@ class Compiler:
         return rule
 
     def _include_(
-            self,
-            grammar: Grammar,
-            repository: FChainMap[str, Rule],
-            s: str,
+        self,
+        grammar: Grammar,
+        repository: FChainMap[str, Rule],
+        s: str,
     ) -> tuple[list[str], tuple[Rule, ...]]:
         if s == '$self':
             return self._patterns(grammar, grammar.patterns)
@@ -554,16 +559,18 @@ class Compiler:
             return self._include(grammar, grammar.repository, f'#{s}')
 
     def _patterns_(
-            self,
-            grammar: Grammar,
-            rules: tuple[Rule, ...],
+        self,
+        grammar: Grammar,
+        rules: tuple[Rule, ...],
     ) -> tuple[list[str], tuple[Rule, ...]]:
         ret_regs = []
         ret_rules: list[Rule] = []
         for rule in rules:
             if rule.include is not None:
                 tmp_regs, tmp_rules = self._include(
-                    grammar, rule.repository, rule.include,
+                    grammar,
+                    rule.repository,
+                    rule.include,
                 )
                 ret_regs.extend(tmp_regs)
                 ret_rules.extend(tmp_rules)
@@ -582,9 +589,9 @@ class Compiler:
         return ret_regs, tuple(ret_rules)
 
     def _captures_ref(
-            self,
-            grammar: Grammar,
-            captures: Captures,
+        self,
+        grammar: Grammar,
+        captures: Captures,
     ) -> Captures:
         return tuple((n, self._visit_rule(grammar, r)) for n, r in captures)
 
@@ -721,10 +728,10 @@ class Grammars:
 
 
 def highlight_line(
-        compiler: Compiler,
-        state: State,
-        line: str,
-        first_line: bool,
+    compiler: Compiler,
+    state: State,
+    line: str,
+    first_line: bool,
 ) -> tuple[State, Regions]:
     ret: list[Region] = []
     pos = 0
@@ -737,7 +744,12 @@ def highlight_line(
         while_state = State(state.entries[:idx], tuple(while_stack))
 
         while_res = while_rule.continues(
-            compiler, while_state, line, pos, first_line, boundary,
+            compiler,
+            while_state,
+            line,
+            pos,
+            first_line,
+            boundary,
         )
         if while_res is None:
             state = while_state.pop_while()
@@ -747,14 +759,24 @@ def highlight_line(
             ret.extend(regions)
 
     search_res = state.cur.rule.search(
-        compiler, state, line, pos, first_line, boundary,
+        compiler,
+        state,
+        line,
+        pos,
+        first_line,
+        boundary,
     )
     while search_res is not None:
         state, pos, boundary, regions = search_res
         ret.extend(regions)
 
         search_res = state.cur.rule.search(
-            compiler, state, line, pos, first_line, boundary,
+            compiler,
+            state,
+            line,
+            pos,
+            first_line,
+            boundary,
         )
 
     if pos < len(line):

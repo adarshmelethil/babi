@@ -20,8 +20,8 @@ InsCallback = Callable[['Buf', int], None]
 
 
 def _diff_codes(
-        a: list[str],
-        b: list[str],
+    a: list[str],
+    b: list[str],
 ) -> Generator[tuple[str, int, int, int, int], None, None]:
     matcher = difflib.SequenceMatcher(a=a, b=b)
     for op, i1, i2, j1, j2 in reversed(matcher.get_opcodes()):
@@ -46,7 +46,8 @@ def _offsets(s: str, tab_size: int) -> tuple[int, ...]:
 
 
 class Modification(Protocol):
-    def __call__(self, buf: Buf) -> None: ...
+    def __call__(self, buf: Buf) -> None:
+        ...
 
 
 class SetModification(NamedTuple):
@@ -318,7 +319,7 @@ class Buf:
 
     def _scroll_amount(self, dim: Dim) -> int:
         # integer round up without banker's rounding (so 1/2 => 1 instead of 0)
-        return int((dim.height + 1) / 2 + .5)
+        return int((dim.height + 1) / 2 + 0.5)
 
     def up(self, dim: Dim) -> None:
         if self.y > 0:

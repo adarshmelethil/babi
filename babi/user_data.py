@@ -7,7 +7,8 @@ import sys
 def _xdg(*path: str, env: str, default: str) -> str:
     return os.path.join(
         os.environ.get(env) or os.path.expanduser(default),
-        'babi', *path,
+        'babi',
+        *path,
     )
 
 

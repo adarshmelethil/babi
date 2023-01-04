@@ -49,8 +49,11 @@ class PreCommit:
     def _root_uncached(self, filename: str) -> str:
         return subprocess.check_output(
             (
-                'git', '-C', os.path.dirname(os.path.abspath(filename)),
-                'rev-parse', '--show-toplevel',
+                'git',
+                '-C',
+                os.path.dirname(os.path.abspath(filename)),
+                'rev-parse',
+                '--show-toplevel',
             ),
             text=True,
             stderr=subprocess.DEVNULL,

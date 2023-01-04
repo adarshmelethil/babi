@@ -38,6 +38,7 @@ def compiler_state(make_grammars):
         grammars = make_grammars(*grammar_dcts)
         compiler = grammars.compiler_for_scope(grammar_dcts[0]['scopeName'])
         return compiler, compiler.root_state
+
     return _compiler_state
 
 
@@ -58,14 +59,16 @@ def test_backslash_a(compiler_state):
 
 BEGIN_END_NO_NL = {
     'scopeName': 'test',
-    'patterns': [{
-        'begin': 'x',
-        'end': 'x',
-        'patterns': [
-            {'match': r'\Ga', 'name': 'ga'},
-            {'match': 'a', 'name': 'noga'},
-        ],
-    }],
+    'patterns': [
+        {
+            'begin': 'x',
+            'end': 'x',
+            'patterns': [
+                {'match': r'\Ga', 'name': 'ga'},
+                {'match': 'a', 'name': 'noga'},
+            ],
+        }
+    ],
 }
 
 
@@ -114,14 +117,16 @@ def test_end_before_other_match(compiler_state):
 
 BEGIN_END_NL = {
     'scopeName': 'test',
-    'patterns': [{
-        'begin': r'x$\n?',
-        'end': 'x',
-        'patterns': [
-            {'match': r'\Ga', 'name': 'ga'},
-            {'match': 'a', 'name': 'noga'},
-        ],
-    }],
+    'patterns': [
+        {
+            'begin': r'x$\n?',
+            'end': 'x',
+            'patterns': [
+                {'match': r'\Ga', 'name': 'ga'},
+                {'match': 'a', 'name': 'noga'},
+            ],
+        }
+    ],
 }
 
 
@@ -131,9 +136,7 @@ def test_backslash_g_captures_nl(compiler_state):
     state, regions1 = highlight_line(compiler, state, 'x\n', True)
     state, regions2 = highlight_line(compiler, state, 'aax\n', False)
 
-    assert regions1 == (
-        Region(0, 2, ('test',)),
-    )
+    assert regions1 == (Region(0, 2, ('test',)),)
     assert regions2 == (
         Region(0, 1, ('test', 'ga')),
         Region(1, 2, ('test', 'noga')),
@@ -149,9 +152,7 @@ def test_backslash_g_captures_nl_next_line(compiler_state):
     state, regions2 = highlight_line(compiler, state, 'aa\n', False)
     state, regions3 = highlight_line(compiler, state, 'aax\n', False)
 
-    assert regions1 == (
-        Region(0, 2, ('test',)),
-    )
+    assert regions1 == (Region(0, 2, ('test',)),)
     assert regions2 == (
         Region(0, 1, ('test', 'ga')),
         Region(1, 2, ('test', 'noga')),
@@ -166,18 +167,22 @@ def test_backslash_g_captures_nl_next_line(compiler_state):
 
 
 def test_while_no_nl(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [{
-            'begin': '> ',
-            'while': '> ',
-            'contentName': 'while',
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
             'patterns': [
-                {'match': r'\Ga', 'name': 'ga'},
-                {'match': 'a', 'name': 'noga'},
+                {
+                    'begin': '> ',
+                    'while': '> ',
+                    'contentName': 'while',
+                    'patterns': [
+                        {'match': r'\Ga', 'name': 'ga'},
+                        {'match': 'a', 'name': 'noga'},
+                    ],
+                }
             ],
-        }],
-    })
+        }
+    )
 
     state, regions1 = highlight_line(compiler, state, '> aa\n', True)
     state, regions2 = highlight_line(compiler, state, '> aa\n', False)
@@ -195,30 +200,30 @@ def test_while_no_nl(compiler_state):
         Region(3, 4, ('test', 'while', 'noga')),
         Region(4, 5, ('test', 'while')),
     )
-    assert regions3 == (
-        Region(0, 6, ('test',)),
-    )
+    assert regions3 == (Region(0, 6, ('test',)),)
 
 
 def test_complex_captures(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'match': '(<).([^>]+)(>)',
-                'captures': {
-                    '1': {'name': 'lbracket'},
-                    '2': {
-                        'patterns': [
-                            {'match': 'a', 'name': 'a'},
-                            {'match': 'z', 'name': 'z'},
-                        ],
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'match': '(<).([^>]+)(>)',
+                    'captures': {
+                        '1': {'name': 'lbracket'},
+                        '2': {
+                            'patterns': [
+                                {'match': 'a', 'name': 'a'},
+                                {'match': 'z', 'name': 'z'},
+                            ],
+                        },
+                        '3': {'name': 'rbracket'},
                     },
-                    '3': {'name': 'rbracket'},
                 },
-            },
-        ],
-    })
+            ],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, '<qabz>', first_line=True)
     assert regions == (
@@ -232,31 +237,33 @@ def test_complex_captures(compiler_state):
 
 
 def test_captures_multiple_applied_to_same_capture(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'match': '((a)) ((b) c) (d (e)) ((f) )',
-                'name': 'matched',
-                'captures': {
-                    '1': {'name': 'g1'},
-                    '2': {'name': 'g2'},
-                    '3': {'name': 'g3'},
-                    '4': {'name': 'g4'},
-                    '5': {'name': 'g5'},
-                    '6': {'name': 'g6'},
-                    '7': {
-                        'patterns': [
-                            {'match': 'f', 'name': 'g7f'},
-                            {'match': ' ', 'name': 'g7space'},
-                        ],
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'match': '((a)) ((b) c) (d (e)) ((f) )',
+                    'name': 'matched',
+                    'captures': {
+                        '1': {'name': 'g1'},
+                        '2': {'name': 'g2'},
+                        '3': {'name': 'g3'},
+                        '4': {'name': 'g4'},
+                        '5': {'name': 'g5'},
+                        '6': {'name': 'g6'},
+                        '7': {
+                            'patterns': [
+                                {'match': 'f', 'name': 'g7f'},
+                                {'match': ' ', 'name': 'g7space'},
+                            ],
+                        },
+                        # this one has to backtrack some
+                        '8': {'name': 'g8'},
                     },
-                    # this one has to backtrack some
-                    '8': {'name': 'g8'},
                 },
-            },
-        ],
-    })
+            ],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, 'a b c d e f ', True)
 
@@ -275,13 +282,17 @@ def test_captures_multiple_applied_to_same_capture(compiler_state):
 
 
 def test_captures_ignores_empty(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [{
-            'match': '(.*) hi',
-            'captures': {'1': {'name': 'before'}},
-        }],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'match': '(.*) hi',
+                    'captures': {'1': {'name': 'before'}},
+                }
+            ],
+        }
+    )
 
     state, regions1 = highlight_line(compiler, state, ' hi\n', True)
     state, regions2 = highlight_line(compiler, state, 'o hi\n', False)
@@ -298,30 +309,32 @@ def test_captures_ignores_empty(compiler_state):
 
 
 def test_captures_ignores_invalid_out_of_bounds(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [{'match': '.', 'captures': {'1': {'name': 'oob'}}}],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [{'match': '.', 'captures': {'1': {'name': 'oob'}}}],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, 'x', first_line=True)
 
-    assert regions == (
-        Region(0, 1, ('test',)),
-    )
+    assert regions == (Region(0, 1, ('test',)),)
 
 
 def test_captures_begin_end(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'begin': '(""")',
-                'end': '(""")',
-                'beginCaptures': {'1': {'name': 'startquote'}},
-                'endCaptures': {'1': {'name': 'endquote'}},
-            },
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'begin': '(""")',
+                    'end': '(""")',
+                    'beginCaptures': {'1': {'name': 'startquote'}},
+                    'endCaptures': {'1': {'name': 'endquote'}},
+                },
+            ],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, '"""x"""', True)
 
@@ -333,17 +346,19 @@ def test_captures_begin_end(compiler_state):
 
 
 def test_captures_while_captures(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'begin': '(>) ',
-                'while': '(>) ',
-                'beginCaptures': {'1': {'name': 'bblock'}},
-                'whileCaptures': {'1': {'name': 'wblock'}},
-            },
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'begin': '(>) ',
+                    'while': '(>) ',
+                    'beginCaptures': {'1': {'name': 'bblock'}},
+                    'whileCaptures': {'1': {'name': 'wblock'}},
+                },
+            ],
+        }
+    )
 
     state, regions1 = highlight_line(compiler, state, '> x\n', True)
     state, regions2 = highlight_line(compiler, state, '> x\n', False)
@@ -362,16 +377,18 @@ def test_captures_while_captures(compiler_state):
 
 
 def test_captures_implies_begin_end_captures(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'begin': '(""")',
-                'end': '(""")',
-                'captures': {'1': {'name': 'quote'}},
-            },
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'begin': '(""")',
+                    'end': '(""")',
+                    'captures': {'1': {'name': 'quote'}},
+                },
+            ],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, '"""x"""', True)
 
@@ -383,16 +400,18 @@ def test_captures_implies_begin_end_captures(compiler_state):
 
 
 def test_captures_implies_begin_while_captures(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'begin': '(>) ',
-                'while': '(>) ',
-                'captures': {'1': {'name': 'block'}},
-            },
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'begin': '(>) ',
+                    'while': '(>) ',
+                    'captures': {'1': {'name': 'block'}},
+                },
+            ],
+        }
+    )
 
     state, regions1 = highlight_line(compiler, state, '> x\n', True)
     state, regions2 = highlight_line(compiler, state, '> x\n', False)
@@ -411,18 +430,20 @@ def test_captures_implies_begin_while_captures(compiler_state):
 
 
 def test_include_self(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'begin': '<',
-                'end': '>',
-                'contentName': 'bracketed',
-                'patterns': [{'include': '$self'}],
-            },
-            {'match': '.', 'name': 'content'},
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'begin': '<',
+                    'end': '>',
+                    'contentName': 'bracketed',
+                    'patterns': [{'include': '$self'}],
+                },
+                {'match': '.', 'name': 'content'},
+            ],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, '<<_>>', first_line=True)
     assert regions == (
@@ -435,18 +456,20 @@ def test_include_self(compiler_state):
 
 
 def test_include_repository_rule(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [{'include': '#impl'}],
-        'repository': {
-            'impl': {
-                'patterns': [
-                    {'match': 'a', 'name': 'a'},
-                    {'match': '.', 'name': 'other'},
-                ],
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [{'include': '#impl'}],
+            'repository': {
+                'impl': {
+                    'patterns': [
+                        {'match': 'a', 'name': 'a'},
+                        {'match': '.', 'name': 'other'},
+                    ],
+                },
             },
-        },
-    })
+        }
+    )
 
     state, regions = highlight_line(compiler, state, 'az', first_line=True)
 
@@ -457,25 +480,31 @@ def test_include_repository_rule(compiler_state):
 
 
 def test_include_with_nested_repositories(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [{
-            'begin': '<', 'end': '>', 'name': 'b',
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
             'patterns': [
-                {'include': '#rule1'},
-                {'include': '#rule2'},
-                {'include': '#rule3'},
+                {
+                    'begin': '<',
+                    'end': '>',
+                    'name': 'b',
+                    'patterns': [
+                        {'include': '#rule1'},
+                        {'include': '#rule2'},
+                        {'include': '#rule3'},
+                    ],
+                    'repository': {
+                        'rule2': {'match': '2', 'name': 'inner2'},
+                        'rule3': {'match': '3', 'name': 'inner3'},
+                    },
+                }
             ],
             'repository': {
-                'rule2': {'match': '2', 'name': 'inner2'},
-                'rule3': {'match': '3', 'name': 'inner3'},
+                'rule1': {'match': '1', 'name': 'root1'},
+                'rule2': {'match': '2', 'name': 'root2'},
             },
-        }],
-        'repository': {
-            'rule1': {'match': '1', 'name': 'root1'},
-            'rule2': {'match': '2', 'name': 'root2'},
-        },
-    })
+        }
+    )
 
     state, regions = highlight_line(compiler, state, '<123>', first_line=True)
 
@@ -593,15 +622,19 @@ def test_include_base(compiler_state):
 
 
 def test_rule_with_begin_and_no_end(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'begin': '!', 'end': '!', 'name': 'bang',
-                'patterns': [{'begin': '--', 'name': 'invalid'}],
-            },
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'begin': '!',
+                    'end': '!',
+                    'name': 'bang',
+                    'patterns': [{'begin': '--', 'name': 'invalid'}],
+                },
+            ],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, '!x! !--!', True)
 
@@ -617,10 +650,12 @@ def test_rule_with_begin_and_no_end(compiler_state):
 
 
 def test_begin_end_substitute_special_chars(compiler_state):
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [{'begin': r'(\*)', 'end': r'\1', 'name': 'italic'}],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [{'begin': r'(\*)', 'end': r'\1', 'name': 'italic'}],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, '*italic*', True)
 
@@ -633,13 +668,15 @@ def test_begin_end_substitute_special_chars(compiler_state):
 
 def test_backslash_z(compiler_state):
     # similar to text.git-commit grammar, \z matches nothing!
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {'begin': '#', 'end': r'\z', 'name': 'comment'},
-            {'name': 'other', 'match': '.'},
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {'begin': '#', 'end': r'\z', 'name': 'comment'},
+                {'name': 'other', 'match': '.'},
+            ],
+        }
+    )
 
     state, regions1 = highlight_line(compiler, state, '# comment', True)
     state, regions2 = highlight_line(compiler, state, 'other?', False)
@@ -649,23 +686,23 @@ def test_backslash_z(compiler_state):
         Region(1, 9, ('test', 'comment')),
     )
 
-    assert regions2 == (
-        Region(0, 6, ('test', 'comment')),
-    )
+    assert regions2 == (Region(0, 6, ('test', 'comment')),)
 
 
 def test_buggy_begin_end_grammar(compiler_state):
     # before this would result in an infinite loop of start / end
-    compiler, state = compiler_state({
-        'scopeName': 'test',
-        'patterns': [
-            {
-                'begin': '(?=</style)',
-                'end': '(?=</style)',
-                'name': 'css',
-            },
-        ],
-    })
+    compiler, state = compiler_state(
+        {
+            'scopeName': 'test',
+            'patterns': [
+                {
+                    'begin': '(?=</style)',
+                    'end': '(?=</style)',
+                    'name': 'css',
+                },
+            ],
+        }
+    )
 
     state, regions = highlight_line(compiler, state, 'test </style', True)
 

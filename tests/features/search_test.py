@@ -185,8 +185,7 @@ def test_search_history_is_saved_between_sessions(run, xdg_data_home):
 
 def test_search_multiple_sessions_append_to_history(run, xdg_data_home):
     xdg_data_home.join('babi/history/search').ensure().write(
-        'orig\n'
-        'history\n',
+        'orig\n' 'history\n',
     )
 
     with run() as h1, and_exit(h1):
@@ -197,12 +196,7 @@ def test_search_multiple_sessions_append_to_history(run, xdg_data_home):
         h1.press_and_enter('h1 history')
 
     contents = xdg_data_home.join('babi/history/search').read()
-    assert contents == (
-        'orig\n'
-        'history\n'
-        'h2 history\n'
-        'h1 history\n'
-    )
+    assert contents == ('orig\n' 'history\n' 'h2 history\n' 'h1 history\n')
 
 
 def test_search_default_same_as_prev_history(run, xdg_data_home, ten_lines):
@@ -221,9 +215,7 @@ def test_search_default_same_as_prev_history(run, xdg_data_home, ten_lines):
 @pytest.mark.parametrize('key', ('BSpace', '^H'))
 def test_search_reverse_search_history_backspace(run, xdg_data_home, key):
     xdg_data_home.join('babi/history/search').ensure().write(
-        'line_5\n'
-        'line_3\n'
-        'line_1\n',
+        'line_5\n' 'line_3\n' 'line_1\n',
     )
     with run() as h, and_exit(h):
         h.press('^W')
@@ -238,9 +230,7 @@ def test_search_reverse_search_history_backspace(run, xdg_data_home, key):
 
 def test_search_reverse_search_history(run, xdg_data_home, ten_lines):
     xdg_data_home.join('babi/history/search').ensure().write(
-        'line_5\n'
-        'line_3\n'
-        'line_1\n',
+        'line_5\n' 'line_3\n' 'line_1\n',
     )
     with run(str(ten_lines)) as h, and_exit(h):
         h.press('^W')
@@ -284,8 +274,7 @@ def test_search_reverse_search_pos_after(run, xdg_data_home, ten_lines):
 
 def test_search_reverse_search_enter_appends(run, xdg_data_home, ten_lines):
     xdg_data_home.join('babi/history/search').ensure().write(
-        'line_1\n'
-        'line_3\n',
+        'line_1\n' 'line_3\n',
     )
     with run(str(ten_lines)) as h, and_exit(h):
         h.press('^W')
@@ -319,8 +308,7 @@ def test_search_reverse_search_resizing(run):
 
 def test_search_reverse_search_does_not_wrap_around(run, xdg_data_home):
     xdg_data_home.join('babi/history/search').ensure().write(
-        'line_1\n'
-        'line_3\n',
+        'line_1\n' 'line_3\n',
     )
     with run() as h, and_exit(h):
         h.press('^W')
@@ -334,8 +322,7 @@ def test_search_reverse_search_does_not_wrap_around(run, xdg_data_home):
 
 def test_search_reverse_search_ctrl_r_on_failed_match(run, xdg_data_home):
     xdg_data_home.join('babi/history/search').ensure().write(
-        'nomatch\n'
-        'line_1\n',
+        'nomatch\n' 'line_1\n',
     )
     with run() as h, and_exit(h):
         h.press('^W')

@@ -27,7 +27,7 @@ class History:
             yield
         finally:
             for k, v in self.data.items():
-                new_history = v[self._orig_len[k]:]
+                new_history = v[self._orig_len[k] :]
                 if new_history:
                     history_filename = os.path.join(history_dir, k)
                     with open(history_filename, 'a+', encoding='UTF-8') as f:

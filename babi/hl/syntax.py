@@ -24,10 +24,10 @@ class FileSyntax:
     include_edge = False
 
     def __init__(
-            self,
-            compiler: Compiler,
-            theme: Theme,
-            color_manager: ColorManager,
+        self,
+        compiler: Compiler,
+        theme: Theme,
+        color_manager: ColorManager,
     ) -> None:
         self._compiler = compiler
         self._theme = theme
@@ -46,13 +46,16 @@ class FileSyntax:
         return self._compiler.root_scope
 
     def _hl_uncached(
-            self,
-            state: State,
-            line: str,
-            first_line: bool,
+        self,
+        state: State,
+        line: str,
+        first_line: bool,
     ) -> tuple[State, HLs]:
         new_state, regions = highlight_line(
-            self._compiler, state, f'{line}\n', first_line=first_line,
+            self._compiler,
+            state,
+            f'{line}\n',
+            first_line=first_line,
         )
 
         # remove the trailing newline
@@ -66,11 +69,7 @@ class FileSyntax:
                 continue
 
             attr = style.attr(self._color_manager)
-            if (
-                    regs and
-                    regs[-1].attr == attr and
-                    regs[-1].end == r.start
-            ):
+            if regs and regs[-1].attr == attr and regs[-1].end == r.start:
                 regs[-1] = regs[-1]._replace(end=r.end)
             else:
                 regs.append(HL(x=r.start, end=r.end, attr=attr))
@@ -144,9 +143,9 @@ class Syntax(NamedTuple):
 
     @classmethod
     def from_screen(
-            cls,
-            stdscr: curses._CursesWindow,
-            color_manager: ColorManager,
+        cls,
+        stdscr: curses._CursesWindow,
+        color_manager: ColorManager,
     ) -> Syntax:
         grammars = Grammars(prefix_data('grammar_v1'), xdg_data('grammar_v1'))
         theme = Theme.from_filename(xdg_config('theme.json'))

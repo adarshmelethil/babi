@@ -12,17 +12,17 @@ _BACKREF_RE = re.compile(r'((?<!\\)(?:\\\\)*)\\([0-9]+)')
 _FLAGS = {
     # (first_line, boundary)
     (False, False): (
-        onigurumacffi.OnigSearchOption.NOT_END_STRING |
-        onigurumacffi.OnigSearchOption.NOT_BEGIN_STRING |
-        onigurumacffi.OnigSearchOption.NOT_BEGIN_POSITION
+        onigurumacffi.OnigSearchOption.NOT_END_STRING
+        | onigurumacffi.OnigSearchOption.NOT_BEGIN_STRING
+        | onigurumacffi.OnigSearchOption.NOT_BEGIN_POSITION
     ),
     (False, True): (
-        onigurumacffi.OnigSearchOption.NOT_END_STRING |
-        onigurumacffi.OnigSearchOption.NOT_BEGIN_STRING
+        onigurumacffi.OnigSearchOption.NOT_END_STRING
+        | onigurumacffi.OnigSearchOption.NOT_BEGIN_STRING
     ),
     (True, False): (
-        onigurumacffi.OnigSearchOption.NOT_END_STRING |
-        onigurumacffi.OnigSearchOption.NOT_BEGIN_POSITION
+        onigurumacffi.OnigSearchOption.NOT_END_STRING
+        | onigurumacffi.OnigSearchOption.NOT_BEGIN_POSITION
     ),
     (True, True): onigurumacffi.OnigSearchOption.NOT_END_STRING,
 }
@@ -37,20 +37,20 @@ class _Reg:
         return f'{type(self).__name__}({self._pattern!r})'
 
     def search(
-            self,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> Match[str] | None:
         return self._reg.search(line, pos, flags=_FLAGS[first_line, boundary])
 
     def match(
-            self,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> Match[str] | None:
         return self._reg.match(line, pos, flags=_FLAGS[first_line, boundary])
 
@@ -65,11 +65,11 @@ class _RegSet:
         return f'{type(self).__name__}({args})'
 
     def search(
-            self,
-            line: str,
-            pos: int,
-            first_line: bool,
-            boundary: bool,
+        self,
+        line: str,
+        pos: int,
+        first_line: bool,
+        boundary: bool,
     ) -> tuple[int, Match[str] | None]:
         return self._set.search(line, pos, flags=_FLAGS[first_line, boundary])
 

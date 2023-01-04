@@ -13,10 +13,10 @@ def line_x(x: int, width: int) -> int:
     else:
         margin = min(width - 3, 6)
         return (
-            width - margin - 2 +
-            (x + 1 - width) //
-            (width - margin - 2) *
-            (width - margin - 2)
+            width
+            - margin
+            - 2
+            + (x + 1 - width) // (width - margin - 2) * (width - margin - 2)
         )
 
 

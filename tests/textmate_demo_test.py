@@ -43,10 +43,15 @@ def test_basic(theme_grammars, tmpdir, capsys):
     f = tmpdir.join('f.demo')
     f.write('*bold*/italic/_underline_# comment\n')
 
-    assert not main((
-        '--theme', str(theme), '--grammar-dir', str(grammars),
-        str(f),
-    ))
+    assert not main(
+        (
+            '--theme',
+            str(theme),
+            '--grammar-dir',
+            str(grammars),
+            str(f),
+        )
+    )
 
     out, _ = capsys.readouterr()
 
@@ -76,10 +81,15 @@ def test_basic_with_blank_theme(theme_grammars, tmpdir, capsys):
     f = tmpdir.join('f.demo')
     f.write('*bold*/italic/_underline_# comment\n')
 
-    assert not main((
-        '--theme', str(theme), '--grammar-dir', str(grammars),
-        str(f),
-    ))
+    assert not main(
+        (
+            '--theme',
+            str(theme),
+            '--grammar-dir',
+            str(grammars),
+            str(f),
+        )
+    )
 
     out, _ = capsys.readouterr()
 

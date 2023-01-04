@@ -29,13 +29,9 @@ class Selection:
         if s_y == e_y:
             self.regions[s_y] = (HL(x=s_x, end=e_x, attr=attr),)
         else:
-            self.regions[s_y] = (
-                HL(x=s_x, end=len(lines[s_y]) + 1, attr=attr),
-            )
+            self.regions[s_y] = (HL(x=s_x, end=len(lines[s_y]) + 1, attr=attr),)
             for l_y in range(s_y + 1, e_y):
-                self.regions[l_y] = (
-                    HL(x=0, end=len(lines[l_y]) + 1, attr=attr),
-                )
+                self.regions[l_y] = (HL(x=0, end=len(lines[l_y]) + 1, attr=attr),)
             self.regions[e_y] = (HL(x=0, end=e_x, attr=attr),)
 
     def get(self) -> tuple[tuple[int, int], tuple[int, int]]:

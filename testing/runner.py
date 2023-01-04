@@ -182,9 +182,9 @@ class PrintsErrorRunner(Runner):
     def resize(self, width, height):
         current_w, current_h = self.get_pane_size()
         sleep_cmd = (
-            'bash', '-c',
-            f'echo {"*" * (current_w * current_h)} && '
-            f'exec sleep infinity',
+            'bash',
+            '-c',
+            f'echo {"*" * (current_w * current_h)} && ' f'exec sleep infinity',
         )
 
         panes = 0

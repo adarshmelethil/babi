@@ -114,9 +114,7 @@ u.py:7: error: error 2
     with tmpdir_git.as_cwd():
         ret = PreCommit().parse('t.py', output)
 
-    assert ret == (
-        linting.Error('t.py', 6, 1, '[mypy] error: error 1'),
-    )
+    assert ret == (linting.Error('t.py', 6, 1, '[mypy] error: error 1'),)
 
 
 def test_matches_files_with_absolute_paths(tmpdir_git):
@@ -131,9 +129,7 @@ mypy.....................................................................Failed
     with tmpdir_git.as_cwd():
         ret = PreCommit().parse('t.py', output)
 
-    assert ret == (
-        linting.Error(t_py_abspath, 6, 1, '[mypy] error: error 1'),
-    )
+    assert ret == (linting.Error(t_py_abspath, 6, 1, '[mypy] error: error 1'),)
 
 
 def test_normalizes_paths_to_repo_root(tmpdir_git):
@@ -149,6 +145,4 @@ d/t.py:6: error: error 1
     with d.as_cwd():
         ret = PreCommit().parse('t.py', output)
 
-    assert ret == (
-        linting.Error('d/t.py', 6, 1, '[mypy] error: error 1'),
-    )
+    assert ret == (linting.Error('d/t.py', 6, 1, '[mypy] error: error 1'),)

@@ -8,9 +8,7 @@ from testing.runner import and_exit
 def test_arrow_key_movement(run, tmpdir):
     f = tmpdir.join('f')
     f.write(
-        'short\n'
-        '\n'
-        'long long long long\n',
+        'short\n' '\n' 'long long long long\n',
     )
     with run(str(f)) as h, and_exit(h):
         h.await_text('short')

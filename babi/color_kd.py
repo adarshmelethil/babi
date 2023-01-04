@@ -29,7 +29,7 @@ def _build(colors: list[tuple[Color, int]], depth: int = 0) -> KD | None:
     return KD(
         *colors[pivot],
         _build(colors[:pivot], depth=depth + 1),
-        _build(colors[pivot + 1:], depth=depth + 1),
+        _build(colors[pivot + 1 :], depth=depth + 1),
     )
 
 

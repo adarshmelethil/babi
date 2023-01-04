@@ -40,11 +40,11 @@ class FakeCurses:
         fake = cls(**kwargs)
         with mock.patch.object(curses, 'COLORS', fake._n_colors, create=True):
             with mock.patch.multiple(
-                    curses,
-                    can_change_color=fake._curses__can_change_color,
-                    color_pair=fake._curses__color_pair,
-                    init_color=fake._curses__init_color,
-                    init_pair=fake._curses__init_pair,
+                curses,
+                can_change_color=fake._curses__can_change_color,
+                color_pair=fake._curses__color_pair,
+                init_color=fake._curses__init_color,
+                init_pair=fake._curses__init_pair,
             ):
                 yield fake
 
@@ -63,14 +63,16 @@ def stdscr():
     return FakeScreen()
 
 
-THEME = Theme.from_dct({
-    'colors': {'foreground': '#cccccc', 'background': '#333333'},
-    'tokenColors': [
-        {'scope': 'string', 'settings': {'foreground': '#009900'}},
-        {'scope': 'keyword', 'settings': {'background': '#000000'}},
-        {'scope': 'keyword', 'settings': {'fontStyle': 'bold'}},
-    ],
-})
+THEME = Theme.from_dct(
+    {
+        'colors': {'foreground': '#cccccc', 'background': '#333333'},
+        'tokenColors': [
+            {'scope': 'string', 'settings': {'foreground': '#009900'}},
+            {'scope': 'keyword', 'settings': {'background': '#000000'}},
+            {'scope': 'keyword', 'settings': {'fontStyle': 'bold'}},
+        ],
+    }
+)
 
 
 @pytest.fixture
@@ -156,11 +158,13 @@ def test_style_attributes_applied(stdscr, syntax):
 
 def test_syntax_highlight_cache_first_line(stdscr, make_grammars):
     with FakeCurses.patch(n_colors=256, can_change_color=False):
-        grammars = make_grammars({
-            'scopeName': 'source.demo',
-            'fileTypes': ['demo'],
-            'patterns': [{'match': r'\Aint', 'name': 'keyword'}],
-        })
+        grammars = make_grammars(
+            {
+                'scopeName': 'source.demo',
+                'fileTypes': ['demo'],
+                'patterns': [{'match': r'\Aint', 'name': 'keyword'}],
+            }
+        )
         syntax = Syntax(grammars, THEME, ColorManager.make())
         syntax._init_screen(stdscr)
         file_hl = syntax.file_highlighter('foo.demo', '')

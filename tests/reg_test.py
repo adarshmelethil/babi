@@ -39,7 +39,7 @@ def test_reg_not_out_of_bounds_at_end():
     # produce an error about the regex being wrong than an IndexError
     with pytest.raises(onigurumacffi.OnigError) as excinfo:
         _Reg('\\A\\')
-    msg, = excinfo.value.args
+    (msg,) = excinfo.value.args
     assert msg == 'end pattern at escape'
 
 

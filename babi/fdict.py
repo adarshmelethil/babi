@@ -29,7 +29,8 @@ class FDict(Generic[TKey, TValue]):
 
 
 class Indexable(Generic[TKey, TValue], Protocol):
-    def __getitem__(self, key: TKey) -> TValue: ...
+    def __getitem__(self, key: TKey) -> TValue:
+        ...
 
 
 class FChainMap(Generic[TKey, TValue]):

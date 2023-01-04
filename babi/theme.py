@@ -25,10 +25,10 @@ class Style(NamedTuple):
     def attr(self, color_manager: ColorManager) -> int:
         pair = color_manager.color_pair(self.fg, self.bg)
         return (
-            curses.color_pair(pair) |
-            self.b * curses.A_BOLD |
-            self.i * A_ITALIC |
-            self.u * curses.A_UNDERLINE
+            curses.color_pair(pair)
+            | self.b * curses.A_BOLD
+            | self.i * A_ITALIC
+            | self.u * curses.A_UNDERLINE
         )
 
     @classmethod
@@ -71,9 +71,7 @@ class TrieNode(NamedTuple):
 
     @classmethod
     def from_dct(cls, dct: dict[str, Any]) -> TrieNode:
-        children = FDict({
-            k: TrieNode.from_dct(v) for k, v in dct['children'].items()
-        })
+        children = FDict({k: TrieNode.from_dct(v) for k, v in dct['children'].items()})
         return cls(PartialStyle.from_dct(dct), children)
 
 

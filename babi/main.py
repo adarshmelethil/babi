@@ -44,10 +44,10 @@ def _edit(screen: Screen, stdin: str) -> EditResult:
 
 
 def c_main(
-        stdscr: curses._CursesWindow,
-        file_infos: list[FileInfo],
-        stdin: str,
-        perf: Perf,
+    stdscr: curses._CursesWindow,
+    file_infos: list[FileInfo],
+    stdin: str,
+    perf: Perf,
 ) -> int:
     screen = Screen(stdscr, file_infos, perf)
 
@@ -151,7 +151,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('filenames', metavar='filename', nargs='*')
     parser.add_argument('--perf-log')
     parser.add_argument(
-        '--key-debug', action='store_true', help=argparse.SUPPRESS,
+        '--key-debug',
+        action='store_true',
+        help=argparse.SUPPRESS,
     )
     args = parser.parse_args(argv)
 

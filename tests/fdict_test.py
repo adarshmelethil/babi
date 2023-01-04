@@ -19,7 +19,7 @@ def test_f_chain_map():
 
     with pytest.raises(KeyError) as excinfo:
         chain_map[2]
-    k, = excinfo.value.args
+    (k,) = excinfo.value.args
     assert k == 2
 
 

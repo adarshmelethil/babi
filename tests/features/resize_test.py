@@ -91,10 +91,7 @@ def test_resize_scroll_does_not_go_negative(run, ten_lines):
 
 def test_horizontal_scrolling(run, tmpdir):
     f = tmpdir.join('f')
-    lots_of_text = ''.join(
-        ''.join(str(i) * 10 for i in range(10))
-        for _ in range(10)
-    )
+    lots_of_text = ''.join(''.join(str(i) * 10 for i in range(10)) for _ in range(10))
     f.write(f'line1\n{lots_of_text}\n')
 
     with run(str(f)) as h, and_exit(h):

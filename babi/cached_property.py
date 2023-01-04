@@ -17,9 +17,9 @@ else:  # pragma: <3.8 cover
             self._func = func
 
         def __get__(
-                self,
-                instance: TSelf | None,
-                owner: type[TSelf] | None = None,
+            self,
+            instance: TSelf | None,
+            owner: type[TSelf] | None = None,
         ) -> TRet:
             assert instance is not None
             ret = instance.__dict__[self._func.__name__] = self._func(instance)
