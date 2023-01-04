@@ -8,12 +8,8 @@ from typing import TYPE_CHECKING
 from babi.buf import Buf
 from babi.color_manager import ColorManager
 from babi.dim import Dim
-from babi.highlight import Compiler
-from babi.highlight import Grammar
-from babi.highlight import Grammars
-from babi.highlight import highlight_line
-from babi.hl.interface import HL
-from babi.hl.interface import HLs
+from babi.highlight import Compiler, Grammar, Grammars, highlight_line
+from babi.hl.interface import HL, HLs
 from babi.horizontal_scrolling import scrolled_line
 from babi.linting import Error
 from babi.theme import Theme

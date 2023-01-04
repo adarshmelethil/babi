@@ -4,8 +4,7 @@ import stat
 
 import pytest
 
-from babi.highlight import highlight_line
-from babi.highlight import Region
+from babi.highlight import Region, highlight_line
 
 
 def test_grammar_matches_extension_only_name(make_grammars):

@@ -5,8 +5,7 @@ import subprocess
 import pytest
 
 from babi import linting
-from babi.linters.pre_commit import _parse_pre_commit
-from babi.linters.pre_commit import PreCommit
+from babi.linters.pre_commit import PreCommit, _parse_pre_commit
 
 
 def test_parse_pre_commit_noop():

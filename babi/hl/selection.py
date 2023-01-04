@@ -4,8 +4,7 @@ import collections
 import curses
 
 from babi.buf import Buf
-from babi.hl.interface import HL
-from babi.hl.interface import HLs
+from babi.hl.interface import HL, HLs
 
 
 class Selection:

@@ -5,8 +5,7 @@ import io
 import pytest
 
 from babi.color_manager import ColorManager
-from babi.file import File
-from babi.file import get_lines
+from babi.file import File, get_lines
 from babi.highlight import Grammars
 from babi.hl.syntax import Syntax
 from babi.theme import Theme

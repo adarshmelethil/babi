@@ -3,13 +3,9 @@ from __future__ import annotations
 import argparse
 from typing import Sequence
 
-from babi.highlight import Compiler
-from babi.highlight import Grammars
-from babi.highlight import highlight_line
-from babi.theme import Style
-from babi.theme import Theme
-from babi.user_data import prefix_data
-from babi.user_data import xdg_config
+from babi.highlight import Compiler, Grammars, highlight_line
+from babi.theme import Style, Theme
+from babi.user_data import prefix_data, xdg_config
 
 
 def print_styled(s: str, style: Style) -> None:

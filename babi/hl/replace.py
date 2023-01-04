@@ -6,8 +6,7 @@ import curses
 from typing import Generator
 
 from babi.buf import Buf
-from babi.hl.interface import HL
-from babi.hl.interface import HLs
+from babi.hl.interface import HL, HLs
 
 
 class Replace:

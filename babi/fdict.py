@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from typing import Generic
-from typing import Iterable
-from typing import Mapping
-from typing import TypeVar
+from typing import Generic, Iterable, Mapping, TypeVar
 
 from babi._types import Protocol
 

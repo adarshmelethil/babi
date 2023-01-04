@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from babi.linting import Error
-from babi.linting import parse_generic_output
+from babi.linting import Error, parse_generic_output
 
 
 def test_parse_generic_output_noop():

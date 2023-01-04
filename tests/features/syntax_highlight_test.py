@@ -7,7 +7,6 @@ import pytest
 
 from testing.runner import and_exit
 
-
 THEME = json.dumps(
     {
         'colors': {'background': '#00d700', 'foreground': '#303030'},

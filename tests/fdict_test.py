@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from babi.fdict import FChainMap
-from babi.fdict import FDict
+from babi.fdict import FChainMap, FDict
 
 
 def test_fdict_repr():

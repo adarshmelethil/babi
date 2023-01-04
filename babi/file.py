@@ -9,19 +9,10 @@ import io
 import itertools
 import os.path
 import re
-from typing import Any
-from typing import Callable
-from typing import cast
-from typing import Generator
-from typing import IO
-from typing import Match
-from typing import NamedTuple
-from typing import Pattern
-from typing import TYPE_CHECKING
-from typing import TypeVar
+from typing import (IO, TYPE_CHECKING, Any, Callable, Generator, Match,
+                    NamedTuple, Pattern, TypeVar, cast)
 
-from babi.buf import Buf
-from babi.buf import Modification
+from babi.buf import Buf, Modification
 from babi.dim import Dim
 from babi.hl.interface import FileHL
 from babi.hl.lint_errors import LintErrors

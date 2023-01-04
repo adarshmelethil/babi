@@ -5,8 +5,7 @@ import functools
 import importlib.resources
 import json
 import os.path
-from typing import Any
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 from babi.color import Color
 from babi.color_manager import ColorManager

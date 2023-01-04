@@ -3,8 +3,7 @@ from __future__ import annotations
 import onigurumacffi
 import pytest
 
-from babi.reg import _Reg
-from babi.reg import _RegSet
+from babi.reg import _Reg, _RegSet
 
 
 def test_reg_first_line():

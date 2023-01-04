@@ -3,21 +3,14 @@ from __future__ import annotations
 import curses
 import functools
 import math
-from typing import Callable
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 
 from babi.buf import Buf
 from babi.color_manager import ColorManager
-from babi.highlight import Compiler
-from babi.highlight import Grammars
-from babi.highlight import highlight_line
-from babi.highlight import State
-from babi.hl.interface import HL
-from babi.hl.interface import HLs
+from babi.highlight import Compiler, Grammars, State, highlight_line
+from babi.hl.interface import HL, HLs
 from babi.theme import Theme
-from babi.user_data import prefix_data
-from babi.user_data import xdg_config
-from babi.user_data import xdg_data
+from babi.user_data import prefix_data, xdg_config, xdg_data
 
 
 class FileSyntax:

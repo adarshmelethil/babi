@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from testing.runner import and_exit
-from testing.runner import trigger_command_mode
+from testing.runner import and_exit, trigger_command_mode
 
 
 def test_mixed_newlines(run, tmpdir):

@@ -3,23 +3,14 @@ from __future__ import annotations
 import functools
 import json
 import os.path
-from typing import Any
-from typing import Match
-from typing import NamedTuple
-from typing import Tuple
-from typing import TypeVar
+from typing import Any, Match, NamedTuple, Tuple, TypeVar
 
-from identify.identify import tags_from_filename
-from identify.identify import tags_from_path
+from identify.identify import tags_from_filename, tags_from_path
 
 from babi._types import Protocol
 from babi.fdict import FChainMap
-from babi.reg import _Reg
-from babi.reg import _RegSet
-from babi.reg import ERR_REG
-from babi.reg import expand_escaped
-from babi.reg import make_reg
-from babi.reg import make_regset
+from babi.reg import (ERR_REG, _Reg, _RegSet, expand_escaped, make_reg,
+                      make_regset)
 
 T = TypeVar('T')
 Scope = Tuple[str, ...]

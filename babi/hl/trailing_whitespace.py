@@ -4,8 +4,7 @@ import curses
 
 from babi.buf import Buf
 from babi.color_manager import ColorManager
-from babi.hl.interface import HL
-from babi.hl.interface import HLs
+from babi.hl.interface import HL, HLs
 
 
 class TrailingWhitespace:

@@ -10,8 +10,7 @@ from babi.buf import Buf
 from babi.color_manager import ColorManager
 from babi.hl.interface import HL
 from babi.hl.syntax import Syntax
-from babi.theme import Color
-from babi.theme import Theme
+from babi.theme import Color, Theme
 
 
 class FakeCurses:

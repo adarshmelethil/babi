@@ -4,8 +4,7 @@ import curses
 import enum
 from typing import TYPE_CHECKING
 
-from babi.horizontal_scrolling import line_x
-from babi.horizontal_scrolling import scrolled_line
+from babi.horizontal_scrolling import line_x, scrolled_line
 
 if TYPE_CHECKING:
     from babi.main import Screen  # XXX: circular

@@ -3,16 +3,11 @@ from __future__ import annotations
 import bisect
 import contextlib
 import difflib
-from typing import Callable
-from typing import Generator
-from typing import Iterator
-from typing import NamedTuple
+from typing import Callable, Generator, Iterator, NamedTuple
 
 from babi._types import Protocol
 from babi.dim import Dim
-from babi.horizontal_scrolling import line_x
-from babi.horizontal_scrolling import scrolled_line
-from babi.horizontal_scrolling import wcwidth
+from babi.horizontal_scrolling import line_x, scrolled_line, wcwidth
 
 SetCallback = Callable[['Buf', int, str], None]
 DelCallback = Callable[['Buf', int, str], None]
