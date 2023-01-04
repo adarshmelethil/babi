@@ -119,7 +119,7 @@ class LintErrors:
 
     def draw(
         self,
-        stdscr: curses._CursesWindow,
+        stdscr: curses.window,
         dim: Dim,
         *,
         focused: bool = False,

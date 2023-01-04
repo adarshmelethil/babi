@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import contextlib
 import curses
 import enum
@@ -11,6 +9,8 @@ import signal
 import sre_parse
 import subprocess
 import sys
+from collections import namedtuple
+from dataclasses import dataclass
 from types import FrameType
 from typing import Callable, Generator, NamedTuple, Pattern
 
@@ -100,7 +100,7 @@ KEYNAME_REWRITE = {
 LINTER_TYPES: tuple[type[linting.Linter], ...] = (PreCommit, Flake8)
 
 
-def _get_wch_with_retry(stdscr: curses._CursesWindow) -> str | int:
+def _get_wch_with_retry(stdscr: curses.window) -> str | int:
     while True:
         try:
             return stdscr.get_wch()
@@ -117,8 +117,9 @@ class EditResult(enum.Enum):
     OPEN = enum.auto()
 
 
-class Command(NamedTuple):
-    callback: Callable[[Screen, list[str]], EditResult | None]
+@dataclass
+class Command:
+    callback: Callable
     nargs: str | int = 0
 
 
@@ -143,7 +144,7 @@ class Layout(NamedTuple):
 class Screen:
     def __init__(
         self,
-        stdscr: curses._CursesWindow,
+        stdscr: curses.window,
         file_infos: list[FileInfo],
         perf: Perf,
     ) -> None:
@@ -852,7 +853,7 @@ class Screen:
                 signal.signal(signal.SIGUSR1, orig)
 
 
-def _init_screen() -> curses._CursesWindow:
+def _init_screen() -> curses.window:
     # set the escape delay so curses does not pause waiting for sequences
     if sys.version_info >= (3, 9) and hasattr(
         curses, 'set_escdelay'
@@ -876,7 +877,7 @@ def _init_screen() -> curses._CursesWindow:
 
 
 @contextlib.contextmanager
-def make_stdscr() -> Generator[curses._CursesWindow, None, None]:
+def make_stdscr() -> Generator[curses.window, None, None]:
     """essentially `curses.wrapper` but split out to implement ^Z"""
     try:
         yield _init_screen()

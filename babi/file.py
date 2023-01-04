@@ -1,5 +1,5 @@
-from __future__ import annotations
-
+from dataclasses import dataclass
+from copy import copy
 import collections
 import contextlib
 import curses
@@ -66,43 +66,22 @@ def _load_file(filename: str) -> tuple[list[str], str, bool, str]:
         raise OpenError(f'error! not a file: {filename!r}')
 
 
+@dataclass(kw_only=True)
 class Action:
-    def __init__(
-        self,
-        *,
-        name: str,
-        modifications: list[Modification],
-        start_x: int,
-        start_y: int,
-        start_modified: bool,
-        end_x: int,
-        end_y: int,
-        end_modified: bool,
-        final: bool,
-    ):
-        self.name = name
-        self.modifications = modifications
-        self.start_x = start_x
-        self.start_y = start_y
-        self.start_modified = start_modified
-        self.end_x = end_x
-        self.end_y = end_y
-        self.end_modified = end_modified
-        self.final = final
+    name: str
+    modifications: list[Modification]
+    start_x: int
+    start_y: int
+    start_modified: bool
+    end_x: int
+    end_y: int
+    end_modified: bool
+    final: bool
 
-    def apply(self, file: File) -> Action:
-        action = Action(
-            name=self.name,
-            modifications=file.buf.apply(self.modifications),
-            start_x=self.end_x,
-            start_y=self.end_y,
-            start_modified=self.end_modified,
-            end_x=self.start_x,
-            end_y=self.start_y,
-            end_modified=self.start_modified,
-            final=True,
-        )
-
+    def apply(self, file):
+        action = copy(self)
+        action.modifications = file.buf.apply(self.modifications)
+        action.final = True
         file.buf.y = self.start_y
         file.buf.x = self.start_x
         file.modified = self.start_modified
@@ -112,7 +91,7 @@ class Action:
 
 def action(func: TCallable) -> TCallable:
     @functools.wraps(func)
-    def action_inner(self: File, *args: Any, **kwargs: Any) -> Any:
+    def action_inner(self, *args: Any, **kwargs: Any) -> Any:
         self.finalize_previous_action()
         return func(self, *args, **kwargs)
 
@@ -126,7 +105,7 @@ def edit_action(
 ) -> Callable[[TCallable], TCallable]:
     def edit_action_decorator(func: TCallable) -> TCallable:
         @functools.wraps(func)
-        def edit_action_inner(self: File, *args: Any, **kwargs: Any) -> Any:
+        def edit_action_inner(self, *args: Any, **kwargs: Any) -> Any:
             with self.edit_action_context(name, final=final):
                 return func(self, *args, **kwargs)
 
@@ -137,7 +116,7 @@ def edit_action(
 
 def keep_selection(func: TCallable) -> TCallable:
     @functools.wraps(func)
-    def keep_selection_inner(self: File, *args: Any, **kwargs: Any) -> Any:
+    def keep_selection_inner(self, *args: Any, **kwargs: Any) -> Any:
         with self.select():
             return func(self, *args, **kwargs)
 
@@ -146,7 +125,7 @@ def keep_selection(func: TCallable) -> TCallable:
 
 def clear_selection(func: TCallable) -> TCallable:
     @functools.wraps(func)
-    def clear_selection_inner(self: File, *args: Any, **kwargs: Any) -> Any:
+    def clear_selection_inner(self, *args: Any, **kwargs: Any) -> Any:
         ret = func(self, *args, **kwargs)
         self.selection.clear()
         return ret
@@ -162,7 +141,7 @@ class Found(NamedTuple):
 class _SearchIter:
     def __init__(
         self,
-        file: File,
+        file,
         reg: Pattern[str],
         *,
         offset: int,
@@ -174,7 +153,7 @@ class _SearchIter:
         self._start_x = file.buf.x + offset
         self._start_y = file.buf.y
 
-    def __iter__(self) -> _SearchIter:
+    def __iter__(self):
         return self
 
     def _stop_if_past_original(self, y: int, match: Match[str]) -> Found:
@@ -448,7 +427,7 @@ class File:
     @clear_selection
     def replace(
         self,
-        screen: Screen,
+        screen,
         reg: Pattern[str],
         replace: str,
     ) -> None:
@@ -977,12 +956,12 @@ class File:
 
     def move_cursor(
         self,
-        stdscr: curses._CursesWindow,
+        stdscr: curses.window,
         dim: Dim,
     ) -> None:
         stdscr.move(*self.buf.cursor_position(dim))
 
-    def draw(self, stdscr: curses._CursesWindow, dim: Dim) -> None:
+    def draw(self, stdscr: curses.window, dim: Dim) -> None:
         to_display = min(self.buf.displayable_count, dim.height)
 
         for file_hl in self._file_hls:

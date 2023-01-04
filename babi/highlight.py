@@ -3,8 +3,13 @@ from __future__ import annotations
 import functools
 import json
 import os.path
+from collections import ChainMap
+from functools import partial
+from operator import attrgetter, methodcaller
+from pathlib import Path
 from typing import Any, Match, NamedTuple, Tuple, TypeVar
 
+import funcy as F
 from identify.identify import tags_from_filename, tags_from_path
 
 from babi._types import Protocol
@@ -634,13 +639,12 @@ class Compiler:
 
 class Grammars:
     def __init__(self, *directories: str) -> None:
-        self._scope_to_files = {
-            os.path.splitext(filename)[0]: os.path.join(directory, filename)
-            for directory in directories
-            if os.path.exists(directory)
-            for filename in sorted(os.listdir(directory))
-            if filename.endswith('.json')
-        }
+        self._scope_to_files = ChainMap(
+            *map(F.compose(
+                dict, partial(map, F.juxt(attrgetter("stem"), F.identity)),
+                sorted, methodcaller("glob", "*.json"), Path
+            ),
+                 directories))
 
         unknown_grammar = {'scopeName': 'source.unknown', 'patterns': []}
         self._raw = {'source.unknown': unknown_grammar}
