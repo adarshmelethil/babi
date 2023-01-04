@@ -4,6 +4,7 @@ import contextlib
 import curses
 import enum
 import hashlib
+import importlib.metadata as importlib_metadata
 import os
 import re
 import signal
@@ -11,31 +12,20 @@ import sre_parse
 import subprocess
 import sys
 from types import FrameType
-from typing import Callable
-from typing import Generator
-from typing import NamedTuple
-from typing import Pattern
+from typing import Callable, Generator, NamedTuple, Pattern
 
 from babi import linting
 from babi.color_manager import ColorManager
 from babi.dim import Dim
-from babi.file import Action
-from babi.file import File
-from babi.file import get_lines
+from babi.file import Action, File, get_lines
 from babi.history import History
 from babi.hl.syntax import Syntax
 from babi.linters.flake8 import Flake8
 from babi.linters.pre_commit import PreCommit
 from babi.perf import Perf
 from babi.proc import graceful_terminate
-from babi.prompt import Prompt
-from babi.prompt import PromptResult
+from babi.prompt import Prompt, PromptResult
 from babi.status import Status
-
-if sys.version_info >= (3, 8):  # pragma: >=3.8 cover
-    import importlib.metadata as importlib_metadata
-else:  # pragma: <3.8 cover
-    import importlib_metadata
 
 VERSION_STR = f'babi v{importlib_metadata.version("babi")}'
 
